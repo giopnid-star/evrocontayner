@@ -4,7 +4,10 @@
   "description": "Local mail endpoint for Evrocontayner contact form",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "security-check": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/security-check.ps1",
+    "backup-db": "powershell -NoProfile -Command \"Copy-Item data/db.sqlite backups-server/db.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss').sqlite\"",
+    "prepare": "husky install"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -13,5 +16,8 @@
     "mysql2": "^3.16.3",
     "nodemailer": "^6.9.3",
     "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
   }
 }

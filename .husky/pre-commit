@@ -1,0 +1,21 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Block .env and similar secret files from being committed
+if git diff --cached --name-only | grep -E '\.env($|\.)|\.env\.(local|[a-z]+\.local)$|secrets|private.key|api.key'; then
+  echo ""
+  echo "❌ ERROR: Attempting to commit secret/environment files!"
+  echo "   Files blocked: .env, .env.local, .env.*.local, secrets, private keys"
+  echo ""
+  echo "   To fix: git reset HEAD <file>"
+  echo ""
+  exit 1
+fi
+
+# Warn if committing to main without PR
+if [ "$(git rev-parse --abbrev-ref HEAD)" = "main" ]; then
+  echo "⚠️  WARNING: You are committing directly to main branch"
+  echo "   Consider creating a feature branch instead"
+fi
+
+exit 0
