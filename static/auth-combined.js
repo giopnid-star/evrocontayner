@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', function(){
   function setup(containerSelector){
     const container = document.querySelector(containerSelector);
     if(!container) return;
+    
+    // Check if already initialized
+    if(container.querySelector('.auth-combined')) return;
+    
     // create combined button
     const combined = document.createElement('div');
     combined.className = 'auth-combined';
@@ -38,7 +42,6 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 
-  // Attempt to attach to header auth area (index) and contact auth container
+  // Attach to all auth containers
   setup('.auth-container');
-  setup('#auth-widget');
 });
