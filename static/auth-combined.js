@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     const btn = combined.querySelector('.auth-combined-btn');
     const menu = combined.querySelector('.auth-combined-menu');
+    const links = menu.querySelectorAll('a');
 
     function open(){
       combined.classList.add('open');
@@ -37,8 +38,25 @@ document.addEventListener('DOMContentLoaded', function(){
       if(combined.classList.contains('open')) close(); else open();
     });
 
+    // Allow links to navigate (don't prevent default)
+    links.forEach(link => {
+      link.addEventListener('click', function(e){
+        e.stopPropagation();
+        // Let the browser navigate naturally
+      });
+    });
+
+    // Close menu when clicking outside
     document.addEventListener('click', function(e){
       if(!e.target.closest('.auth-combined')) close();
+    });
+
+    // Close menu when clicking inside to allow navigation
+    menu.addEventListener('click', function(e){
+      if(e.target.tagName === 'A') {
+        // Allow navigation - close menu but let click propagate
+        close();
+      }
     });
   }
 
