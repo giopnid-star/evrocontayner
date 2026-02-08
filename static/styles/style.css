@@ -583,74 +583,81 @@ header.collapsed .nav-item:hover .dropdown-menu {
 /* Ensure inline SVGs size and use current color */
 .sidebar a .icon svg,
 .sidebar a .icon .icon-svg {
-  @media (min-width: 1200px) {
-    .services-grid {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      justify-items: center;
-    }
+  width: 20px;
+  height: 20px;
+  display: block;
+  stroke: currentColor;
+  fill: currentColor;
+}
 
-    /* Сделать карточки компактными: ограничить ширину и центрировать внутри колонки */
-    .service-card {
-      max-width: 300px;
-      width: 100%;
-      padding: 16px 12px;
-      display: flex;
-      flex-direction: column;
-      box-shadow: none;
-    }
+/* Sidebar expanded labels and tooltips */
+.sidebar:hover {
+  width: 220px;
+}
 
-    .service-icon {
-      width: 48px;
-      height: 48px;
-      font-size: 1.9rem;
-    }
+/* При открытии сайдбара: уменьшить иконки, чтобы больше места заняли метки */
+.sidebar:hover a .icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  animation-play-state: paused;
+  transform: translateX(4px) scale(0.96);
+}
 
-    .service-card-header {
-      gap: 10px;
-      margin-bottom: 10px;
-    }
+.sidebar:hover a .icon svg,
+.sidebar:hover a .icon .icon-svg {
+  width: 14px;
+  height: 14px;
+}
 
-    .service-card-header h3 {
-      font-size: 1rem;
-    }
+/* Если нужно полностью убирать иконки при открытии сайдбара, добавьте класс hide-icons к .sidebar */
+.sidebar.hide-icons:hover a .icon {
+  display: none;
+}
 
-    .service-card-content p {
-      font-size: 0.9rem;
-      margin-bottom: 10px;
-    }
+.sidebar.hide-icons:hover a {
+  justify-content: center;
+}
 
-    .service-features {
-      gap: 6px;
-    }
+/* Языковая панель */
+.lang-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  z-index: 1401;
+}
 
-    .service-features li {
-      font-size: 0.85rem;
-    }
+.lang-tab {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-primary);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
 
-    .service-btn {
-      padding: 8px 14px;
-      font-size: 0.85rem;
-    }
+.lang-tab:hover {
+  background: var(--accent-color);
+  color: var(--bg-primary);
+}
 
-    .service-card-content {
-      flex-grow: 1;
-      overflow: visible;
-      margin-bottom: 10px;
-    }
-  }
-
-  /* Desktop: render grid visually from bottom-right to top-left
-     При этом поворачиваем каждую карточку обратно, чтобы контент был в нормальной ориентации */
-  @media (min-width: 1200px) {
-    .services-grid {
-      transform: rotate(180deg);
-    }
-
-    .services-grid > .service-card {
-      transform: rotate(180deg);
-    }
-  }
+.lang-panel {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
   z-index: 1400;
   margin-top: 8px;
   min-width: 120px;
@@ -1800,15 +1807,22 @@ h2::after {
 }
 
 .service-card.expanded .service-full-desc {
-  display: none !important;
+  max-height: 480px;
+  opacity: 1;
+  padding-top: 12px;
 }
 
 .service-close-btn {
-  display: none !important;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-weight: 600;
+  padding: 8px 0;
 }
 
 .service-close-btn:hover {
-  display: none !important;
+  color: var(--text-primary);
 }
 
 @media (max-width: 768px) {
@@ -1829,58 +1843,6 @@ h2::after {
 
   .service-card-header h3 {
     font-size: 1.1rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .services-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-  }
-
-  .service-card {
-    padding: 18px 14px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .service-icon {
-    width: 50px;
-    height: 50px;
-    font-size: 2rem;
-  }
-
-  .service-card-header {
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-
-  .service-card-header h3 {
-    font-size: 1rem;
-  }
-
-  .service-card-content p {
-    font-size: 0.85rem;
-    margin-bottom: 12px;
-  }
-
-  .service-features {
-    gap: 6px;
-  }
-
-  .service-features li {
-    font-size: 0.8rem;
-  }
-
-  .service-btn {
-    padding: 8px 16px;
-    font-size: 0.85rem;
-  }
-
-  .service-card-content {
-    flex-grow: 1;
-    overflow-y: auto;
-    margin-bottom: 12px;
   }
 }
 
