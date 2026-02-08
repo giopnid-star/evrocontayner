@@ -3151,3 +3151,49 @@ h2::after {
     margin-bottom: 16px;
   }
 }
+
+/* Cookie consent banner */
+.cookie-consent{
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  background: rgba(18,20,22,0.95);
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  z-index: 9999;
+  transform: translateY(24px);
+  opacity: 0;
+  transition: transform 240ms ease, opacity 240ms ease;
+  overflow: hidden;
+}
+.cookie-consent.visible{
+  transform: translateY(0);
+  opacity: 1;
+}
+.cookie-inner{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  padding:12px 14px;
+}
+.cookie-text{ flex:1; min-width:160px }
+.cookie-text p{ margin:4px 0 0; font-size:14px; color: #ddd }
+.cookie-actions{ display:flex; gap:6px; margin-left:8px }
+.btn{ padding:8px 12px; border-radius:6px; cursor:pointer; border:0 }
+.btn-primary{ background:#2b8aef; color:#fff }
+.btn-outline{ background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.12) }
+
+/* Inline settings button placed near footer terms link */
+.cookie-settings-inline{
+  background:transparent;
+  border:0;
+  color: #cfd8dc;
+  margin-left:8px;
+  cursor:pointer;
+  font-size:13px;
+  text-decoration:underline;
+  padding:2px 6px;
+}
+.cookie-settings-inline:hover{ color:#fff }

@@ -736,7 +736,10 @@
 
   <footer class="footer">
     <div class="footer-content">
-      <h3><a href="terms.html" data-i18n="footer.terms">Условия пользования</a></h3>
+      <h3>
+        <a href="terms.html" data-i18n="footer.terms">Условия пользования</a>
+        <button class="cookie-settings-inline" aria-label="Настройки cookie">Настройки cookie</button>
+      </h3>
       <div class="footer-sections">
         <div class="footer-section">
 
@@ -749,7 +752,22 @@
     </div>
   </footer>
 
+  <!-- Cookie consent banner (inserted before other scripts) -->
+  <div id="cookie-consent" class="cookie-consent" aria-live="polite" style="display:none;">
+    <div class="cookie-inner">
+      <div class="cookie-text">
+        <strong>Мы используем cookies</strong>
+        <p>Чтобы улучшить работу сайта и запомнить ваши настройки, мы используем файлы cookie. Продолжая, вы соглашаетесь с использованием cookie.</p>
+      </div>
+      <div class="cookie-actions">
+        <button id="cookie-accept" class="btn btn-primary">Принять</button>
+        <button id="cookie-settings" class="btn btn-outline">Настройки</button>
+      </div>
+    </div>
+  </div>
+
   <script src="static/catalog.js"></script>
+  <script src="static/cookie-consent.js"></script>
   <script src="static/i18n.js" defer></script>
   <script src="static/theme-toggle.js" defer></script>
   <script src="static/hero-images.js" defer></script>
