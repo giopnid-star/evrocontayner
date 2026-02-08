@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "security-check": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/security-check.ps1",
-    "backup-db": "powershell -NoProfile -Command \"Copy-Item data/db.sqlite backups-server/db.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss').sqlite\"",
-    "prepare": "husky install"
+    "backup-db": "powershell -NoProfile -Command \"Copy-Item data/db.sqlite backups-server/db.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss').sqlite\""
   },
   "dependencies": {
     "cors": "^2.8.5",
