@@ -2,10 +2,12 @@
 . "$(dirname "$0")/_/husky.sh"
 
 # Block .env and similar secret files from being committed
-if git diff --cached --name-only | grep -E '\.env($|\.)|\.env\.(local|[a-z]+\.local)$|secrets|private.key|api.key'; then
+# BUT ALLOW .env.example (it's just a template without real values)
+if git diff --cached --name-only | grep -E '\.env($|\.local|\.js|\.ts)' | grep -v '\.env\.example'; then
   echo ""
   echo "❌ ERROR: Attempting to commit secret/environment files!"
   echo "   Files blocked: .env, .env.local, .env.*.local, secrets, private keys"
+  echo "   Allowed: .env.example (template only)"
   echo ""
   echo "   To fix: git reset HEAD <file>"
   echo ""

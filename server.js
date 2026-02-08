@@ -5,6 +5,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
+const crypto = require('crypto');
 
 const app = express();
 app.use(cors());
@@ -38,6 +39,19 @@ db.serialize(() => {
     sent INTEGER DEFAULT 0,
     message_id TEXT
   )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    name TEXT,
+    created_at TEXT,
+    last_login TEXT,
+    verified INTEGER DEFAULT 0,
+    verification_token TEXT,
+    session_token TEXT,
+    session_expires TEXT
+  )`);
 });
 
 function runSql(sql, params = []) {
@@ -48,6 +62,176 @@ function runSql(sql, params = []) {
     });
   });
 }
+
+function getSql(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) return reject(err);
+      resolve(row);
+    });
+  });
+}
+
+function getAllSql(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) return reject(err);
+      resolve(rows || []);
+    });
+  });
+}
+
+function hashPassword(password) {
+  return crypto.createHash('sha256').update(password + 'salt_evrocontayner').digest('hex');
+}
+
+function generateToken() {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+// POST: User Registration
+app.post('/api/register', async (req, res) => {
+  const { email, password, name } = req.body || {};
+  if (!email || !password || !name) {
+    return res.status(400).json({ error: 'Email, пароль и имя обязательны' });
+  }
+
+  try {
+    const existing = await getSql('SELECT id FROM users WHERE email = ?', [email]);
+    if (existing) {
+      return res.status(409).json({ error: 'Пользователь с таким email уже зарегистрирован' });
+    }
+
+    const passwordHash = hashPassword(password);
+    const createdAt = new Date().toISOString();
+    const verificationToken = generateToken();
+    
+    const result = await runSql(
+      'INSERT INTO users (email, password_hash, name, created_at, verification_token, verified) VALUES (?, ?, ?, ?, ?, 1)',
+      [email, passwordHash, name, createdAt, verificationToken]
+    );
+
+    // Send welcome email
+    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMTP_PORT || 587),
+        secure: process.env.SMTP_PORT == 465,
+        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+      });
+
+      await transporter.sendMail({
+        from: process.env.SMTP_USER,
+        to: email,
+        subject: 'Добро пожаловать на Evrocontayner! 🎉',
+        html: `
+          <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#f7f9fc;border-radius:8px;">
+            <h2 style="color:#0f172a;margin-bottom:16px;">Добро пожаловать, ${name}!</h2>
+            <p style="color:#475569;font-size:16px;margin-bottom:12px;">Ваш аккаунт успешно создан на сайте <strong>Evrocontayner</strong>.</p>
+            <div style="background:#ffffff;padding:16px;border-radius:6px;margin:20px 0;border-left:4px solid #e8d661;">
+              <p style="margin:0;color:#0f172a;"><strong>Email:</strong> ${email}</p>
+              <p style="margin:8px 0 0 0;color:#475569;font-size:14px;">Вы можете авторизоваться и начать использовать сервис.</p>
+            </div>
+            <p style="color:#7c8a9d;font-size:14px;margin-top:24px;">С уважением,<br/>Команда Evrocontayner</p>
+          </div>
+        `
+      });
+    }
+
+    const sessionToken = generateToken();
+    const sessionExpires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    await runSql(
+      'UPDATE users SET session_token = ?, session_expires = ? WHERE id = ?',
+      [sessionToken, sessionExpires, result.lastID]
+    );
+
+    res.json({ ok: true, userId: result.lastID, sessionToken, user: { id: result.lastID, email, name } });
+  } catch (err) {
+    console.error('Registration error:', err);
+    res.status(500).json({ error: 'Ошибка регистрации: ' + err.message });
+  }
+});
+
+// POST: User Login
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body || {};
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email и пароль обязательны' });
+  }
+
+  try {
+    const user = await getSql('SELECT id, email, name, password_hash FROM users WHERE email = ?', [email]);
+    if (!user) {
+      return res.status(401).json({ error: 'Неверный email или пароль' });
+    }
+
+    const passwordHash = hashPassword(password);
+    if (user.password_hash !== passwordHash) {
+      return res.status(401).json({ error: 'Неверный email или пароль' });
+    }
+
+    const sessionToken = generateToken();
+    const sessionExpires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    await runSql(
+      'UPDATE users SET session_token = ?, session_expires = ?, last_login = ? WHERE id = ?',
+      [sessionToken, sessionExpires, new Date().toISOString(), user.id]
+    );
+
+    res.json({ ok: true, userId: user.id, sessionToken, user: { id: user.id, email: user.email, name: user.name } });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Ошибка входа: ' + err.message });
+  }
+});
+
+// POST: User Logout
+app.post('/api/logout', async (req, res) => {
+  const { sessionToken } = req.body || {};
+  if (!sessionToken) return res.status(400).json({ error: 'sessionToken обязателен' });
+
+  try {
+    await runSql('UPDATE users SET session_token = NULL, session_expires = NULL WHERE session_token = ?', [sessionToken]);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST: Verify Session
+app.post('/api/verify-session', async (req, res) => {
+  const { sessionToken } = req.body || {};
+  if (!sessionToken) return res.status(401).json({ ok: false });
+
+  try {
+    const user = await getSql(
+      'SELECT id, email, name, session_expires FROM users WHERE session_token = ?',
+      [sessionToken]
+    );
+    if (!user) return res.status(401).json({ ok: false });
+
+    const now = new Date();
+    if (new Date(user.session_expires) < now) {
+      await runSql('UPDATE users SET session_token = NULL WHERE id = ?', [user.id]);
+      return res.status(401).json({ ok: false, expired: true });
+    }
+
+    res.json({ ok: true, user: { id: user.id, email: user.email, name: user.name } });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// GET: List all users (for admin)
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await getAllSql(
+      'SELECT id, email, name, created_at, last_login, verified FROM users ORDER BY created_at DESC'
+    );
+    res.json({ users });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // POST: Send email
 app.post('/send', async (req, res) => {
