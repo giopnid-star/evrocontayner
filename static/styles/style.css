@@ -639,6 +639,18 @@ header.collapsed .nav-item:hover .dropdown-menu {
       margin-bottom: 10px;
     }
   }
+
+  /* Desktop: render grid visually from bottom-right to top-left
+     При этом поворачиваем каждую карточку обратно, чтобы контент был в нормальной ориентации */
+  @media (min-width: 1200px) {
+    .services-grid {
+      transform: rotate(180deg);
+    }
+
+    .services-grid > .service-card {
+      transform: rotate(180deg);
+    }
+  }
   z-index: 1400;
   margin-top: 8px;
   min-width: 120px;
