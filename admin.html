@@ -359,10 +359,6 @@
   <main>
     <div class="admin-header">
       <h1>⚙️ Админ Панель</h1>
-      <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; width: 100%; justify-content: space-between;">
-        <div id="userInfo"></div>
-        <button class="logout-btn" id="logoutBtn">Выход</button>
-      </div>
     </div>
 
     <div class="tabs">
@@ -464,29 +460,7 @@
     let allUsers = [];
     let userSession = null;
 
-    function checkAuth() {
-      const sessionToken = localStorage.getItem('sessionToken');
-      const user = localStorage.getItem('user');
 
-      if (!sessionToken || !user) {
-        window.location.href = 'login.html';
-        return;
-      }
-
-      userSession = JSON.parse(user);
-      updateUserInfo();
-      loadContacts();
-      loadUsers();
-    }
-
-    function updateUserInfo() {
-      const userInfoEl = document.getElementById('userInfo');
-      userInfoEl.innerHTML = `
-        <div class="user-info">
-          <span>👤 <strong>${userSession.name}</strong> (${userSession.email})</span>
-        </div>
-      `;
-    }
 
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
@@ -623,17 +597,6 @@
 
     document.getElementById('refreshUsersBtn').addEventListener('click', loadUsers);
 
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      const sessionToken = localStorage.getItem('sessionToken');
-      await fetch('/api/logout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionToken })
-      });
-      localStorage.removeItem('sessionToken');
-      localStorage.removeItem('user');
-      window.location.href = 'login.html';
-    });
 
     ['q', 'sent'].forEach(id => {
       document.getElementById(id).addEventListener('change', () => {
@@ -642,7 +605,8 @@
       });
     });
 
-    checkAuth();
+    loadContacts();
+    loadUsers();
   </script>
 </body>
 </html>

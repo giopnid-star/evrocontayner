@@ -172,6 +172,25 @@
         <a href="index.html" class="back-button" data-i18n="back.home">← Вернуться на главную</a>
         <section id="contact-page">
             <h2 data-i18n="contact.title">Связаться с нами</h2>
+            
+            <!-- Auth status widget -->
+            <div id="auth-widget" style="display: none; margin-bottom: 20px; padding: 14px; background: var(--bg-secondary); border-radius: 8px; border-left: 4px solid var(--accent-color);">
+              <p style="margin: 0 0 10px 0; color: var(--text-secondary);">📋 Ваши данные</p>
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <div>
+                  <p style="margin: 0; color: var(--text-primary); font-weight: 600;" id="auth-name"></p>
+                  <p style="margin: 4px 0 0 0; color: var(--text-secondary); font-size: 0.9rem;" id="auth-email"></p>
+                </div>
+                <button id="auth-logout-btn" type="button" style="margin-left: auto; padding: 6px 12px; background: transparent; border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s ease;">Выход</button>
+              </div>
+            </div>
+
+            <!-- Login/Register buttons -->
+            <div id="auth-buttons" style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+              <a href="login.html" class="nav-btn" style="text-decoration: none; text-align: center; flex: 1; min-width: 140px;">🔐 Вход</a>
+              <a href="register.html" class="nav-btn" style="text-decoration: none; text-align: center; flex: 1; min-width: 140px;">📝 Регистрация</a>
+            </div>
+
             <form id="contact-form" class="contact-form">
                 <input id="cf-name" name="name" type="text" placeholder="Ваше имя" data-i18n="form.name" required>
                 <input id="cf-email" name="email" type="email" placeholder="Email" data-i18n="form.email" required>
@@ -217,6 +236,52 @@
                 const form = document.getElementById('contact-form');
                 const status = document.getElementById('contact-status');
                 const submitBtn = document.getElementById('cf-submit');
+                const nameFld = document.getElementById('cf-name');
+                const emailFld = document.getElementById('cf-email');
+                const authWidget = document.getElementById('auth-widget');
+                const authButtons = document.getElementById('auth-buttons');
+                const logoutBtn = document.getElementById('auth-logout-btn');
+
+                // Check if user is logged in
+                const sessionToken = localStorage.getItem('sessionToken');
+                const userStr = localStorage.getItem('user');
+                
+                if (sessionToken && userStr) {
+                    try {
+                        const user = JSON.parse(userStr);
+                        // Show auth widget and hide login buttons
+                        authWidget.style.display = 'block';
+                        authButtons.style.display = 'none';
+                        
+                        // Populate auth widget
+                        document.getElementById('auth-name').textContent = user.name || 'Пользователь';
+                        document.getElementById('auth-email').textContent = user.email || '';
+                        
+                        // Auto-fill form with user data
+                        nameFld.value = user.name || '';
+                        nameFld.readOnly = true;
+                        emailFld.value = user.email || '';
+                        emailFld.readOnly = true;
+                        
+                        // Logout handler
+                        logoutBtn.addEventListener('click', async () => {
+                            await fetch('/api/logout', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ sessionToken })
+                            });
+                            localStorage.removeItem('sessionToken');
+                            localStorage.removeItem('user');
+                            window.location.reload();
+                        });
+                    } catch (e) {
+                        console.error('Error parsing user data:', e);
+                    }
+                } else {
+                    // Show login buttons if no session
+                    authWidget.style.display = 'none';
+                    authButtons.style.display = 'flex';
+                }
 
                 form.addEventListener('submit', async function (e) {
                     e.preventDefault();
@@ -225,8 +290,8 @@
                     submitBtn.textContent = 'Отправка...';
 
                     const payload = {
-                        name: document.getElementById('cf-name').value.trim(),
-                        email: document.getElementById('cf-email').value.trim(),
+                        name: nameFld.value.trim(),
+                        email: emailFld.value.trim(),
                         message: document.getElementById('cf-message').value.trim()
                     };
 
@@ -248,7 +313,7 @@
                         if (res.ok) {
                             status.style.color = 'green';
                             status.textContent = (data && data.ok) ? 'Сообщение успешно отправлено.' : 'Сообщение отправлено.';
-                            form.reset();
+                            if (!sessionToken) form.reset();
                         } else {
                             status.style.color = 'crimson';
                             status.textContent = (data && data.error) ? data.error : (raw || 'Ошибка сервера. Проверьте консоль сервера.');

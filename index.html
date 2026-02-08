@@ -52,6 +52,17 @@
           </div>
         </div>
         <button id="theme-toggle" class="theme-toggle-btn" title="Переключить тему">🌙</button>
+        <div id="auth-controls" style="display: flex; gap: 8px; align-items: center;">
+          <a href="login.html" style="padding: 6px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: all 0.3s ease; display: inline-block;">🔐 Вход</a>
+          <a href="register.html" style="padding: 6px 12px; background: transparent; color: var(--accent-color); border: 1px solid var(--accent-color); border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: all 0.3s ease; display: inline-block;">📝 Регистрация</a>
+        </div>
+        <div id="user-profile" style="display: none; align-items: center; gap: 8px; padding: 8px 12px; background: var(--bg-secondary); border-radius: 6px;">
+          <div style="text-align: right; font-size: 0.8rem;">
+            <div style="font-weight: 600; color: var(--text-primary);" id="profile-name"></div>
+            <div style="color: var(--text-secondary);">Профиль</div>
+          </div>
+          <button id="profile-logout" style="padding: 4px 8px; background: transparent; border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s ease;">Выход</button>
+        </div>
       </div>
     </div>
     <div class="header-nav">
@@ -746,6 +757,45 @@
   <script src="static/lang-toggle.js" defer></script>
   <script src="static/services-expand.js" defer></script>
   <script src="static/mobile-menu.js" defer></script>
+  <script>
+    // Handle authentication state in header
+    function updateAuthUI() {
+      const sessionToken = localStorage.getItem('sessionToken');
+      const userStr = localStorage.getItem('user');
+      const authControls = document.getElementById('auth-controls');
+      const userProfile = document.getElementById('user-profile');
+      
+      if (sessionToken && userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          authControls.style.display = 'none';
+          userProfile.style.display = 'flex';
+          document.getElementById('profile-name').textContent = user.name || user.email;
+        } catch (e) {
+          console.error('Error parsing user data:', e);
+          authControls.style.display = 'flex';
+          userProfile.style.display = 'none';
+        }
+      } else {
+        authControls.style.display = 'flex';
+        userProfile.style.display = 'none';
+      }
+    }
+    
+    // Handle logout
+    document.addEventListener('DOMContentLoaded', function() {
+      updateAuthUI();
+      
+      const profileLogout = document.getElementById('profile-logout');
+      if (profileLogout) {
+        profileLogout.addEventListener('click', function() {
+          localStorage.removeItem('sessionToken');
+          localStorage.removeItem('user');
+          updateAuthUI();
+        });
+      }
+    });
+  </script>
 </body>
 
 </html>
