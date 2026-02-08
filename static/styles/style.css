@@ -197,67 +197,88 @@ header.collapsed {
 }
 
 /* Поиск: по умолчанию спрятан и позиционируется справа рядом с кнопками */
+/* Поиск: по умолчанию спрятан и позиционируется в отдельной ячейке под header-top
+   — при открытии увеличиваем отступ header, чтобы панель не перекрывала контент */
 .search-bar {
   position: absolute;
-  right: 220px;
-  /* место появления слева от правых кнопок (смещено влево) */
-  top: 50%;
-  transform: translateY(-50%);
+  left: 28px;
+  right: 28px;
+  top: 100%;
+  transform: none;
   display: flex;
   align-items: center;
   gap: 10px;
   opacity: 0;
   pointer-events: none;
-  max-width: 0;
+  max-width: none;
   overflow: hidden;
-  transition: max-width 0.32s ease, opacity 0.24s ease, transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  transform-origin: right center;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  transition: opacity 0.22s ease, transform 0.22s ease, padding 0.2s ease;
+  transform-origin: top center;
   z-index: 1400;
 }
 
 .header-top.search-active .search-bar {
   opacity: 1;
   pointer-events: auto;
-  max-width: 420px;
 }
 
-/* Адаптация поиска на мобильных */
+/* При открытом поиске увеличиваем внутренний отступ header, чтобы панель "вставала" под ним
+   и не перекрывала основной контент страницы */
+.header-top.search-active {
+  padding-bottom: 72px;
+}
+
+/* Поведение поиска на мобильных: показывать в аккуратной ячейке ниже header, не перекрывая контент */
 @media (max-width: 768px) {
-  .search-bar {
-    position: absolute;
-    right: 50px;
-    top: 100%;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 6px;
-    display: none;
-    flex-direction: column;
-    gap: 4px;
-    width: 180px;
-    z-index: 1400;
-    margin-top: 2px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  .header-top.search-active .search-bar {
-    display: flex;
-  }
-
-  .search-bar input,
-  .search-bar select,
-  .search-bar button {
-    padding: 4px;
-    font-size: 0.7rem;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-  }
-  
   .header-top {
-    padding: 8px 10px;
+    padding: 10px 12px;
   }
+  .header-top.search-active {
+    padding-bottom: 72px;
+  }
+  .search-bar {
+    left: 12px;
+    right: 12px;
+    padding: 10px;
+    gap: 8px;
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    display: flex !important;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .header-top.search-active .search-bar {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .search-bar input,
+  .search-bar select {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* Гарантируем, что навигационная панель всегда видна и не прячется при сворачивании */
+.header-nav {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  z-index: 1401;
+}
+
+header.collapsed .header-nav {
+  position: relative !important;
+  transform: none !important;
+  top: auto !important;
+  left: auto !important;
 }
 
 .header-nav {
@@ -2215,30 +2236,29 @@ h2::after {
 
   /* Header */
   .header-top {
-    padding: 8px 10px;
+    padding: 12px 16px;
   }
 
   .header-top .logo {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
   }
 
-  .top-right-controls {
-    gap: 4px;
+  .search-bar {
+    right: 140px;
   }
 
-  .search-toggle-btn,
-  .theme-toggle-btn {
-    padding: 4px 6px;
-    font-size: 0.9rem;
+  .header-top.search-active .search-bar {
+    max-width: 250px;
   }
 
-  /* HIDE dropdown navigation on mobile - prevents overlap */
   .header-nav {
-    display: none !important;
+    padding: 12px 16px 16px 16px;
+    gap: 6px;
   }
 
-  .dropdown-menu {
-    display: none !important;
+  .nav-btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
   }
 
   /* Hero */
@@ -2406,91 +2426,6 @@ h2::after {
   }
 }
 
-/* Mobile safety fixes: keep nav static and expanded, search compact */
-@media (max-width: 768px) {
-  /* Ensure header navigation is static and part of the page flow */
-  header.collapsed .header-nav,
-  .header-nav {
-    position: static !important;
-    transform: none !important;
-    top: auto !important;
-    left: auto !important;
-    width: 100% !important;
-    display: block !important;
-    pointer-events: auto !important;
-    opacity: 1 !important;
-  }
-
-  /* Make the nav vertical and always expanded so it doesn't overlap content */
-  .header-nav {
-    display: flex !important;
-    flex-direction: column;
-    gap: 8px;
-    padding: 8px 12px 12px 12px;
-    background: var(--bg-secondary);
-    border-top: 1px solid var(--border-color);
-    z-index: 1200;
-  }
-
-  .header-nav .nav-item {
-    display: block;
-    width: 100%;
-  }
-
-  .header-nav .nav-btn {
-    width: auto !important;
-    text-align: center;
-    padding: 10px 22px !important;
-    background: transparent;
-    border: none;
-    font-size: 0.95rem;
-    white-space: nowrap;
-  }
-
-  .header-nav .nav-btn:hover {
-    transform: none !important;
-    background: rgba(0,0,0,0.03);
-    box-shadow: none !important;
-  }
-
-  /* Show dropdowns inline under each nav item */
-  .header-nav .dropdown-menu {
-    position: static !important;
-    transform: none !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    display: flex !important;
-    flex-direction: column;
-    gap: 4px;
-    margin: 4px 0 8px 12px;
-    padding-left: 8px;
-    border: none;
-    box-shadow: none;
-    background: transparent;
-  }
-
-  .header-nav .dropdown-menu a {
-    padding: 8px 12px;
-    font-size: 0.85rem;
-    border-left: none;
-  }
-
-  /* Keep search as a compact popup that doesn't overlap */
-  .header-top.search-active .search-bar {
-    display: flex !important;
-    position: absolute !important;
-    right: 50px !important;
-    top: 100% !important;
-    width: 180px !important;
-    z-index: 1400 !important;
-  }
-
-  /* Hide hamburger since we display full nav on mobile */
-  .mobile-menu-toggle {
-    display: none !important;
-  }
-}
-
 /* Mobile phones (480px - 640px) */
 @media (max-width: 640px) {
   body {
@@ -2546,15 +2481,30 @@ h2::after {
     font-size: 0.9rem;
   }
 
-  .search-bar {
-    width: 160px;
+  /* Navigation */
+  .header-nav {
+    padding: 8px 8px 10px 8px;
+    gap: 4px;
   }
 
-  .search-bar input,
-  .search-bar select,
-  .search-bar button {
-    padding: 3px;
-    font-size: 0.65rem;
+  .nav-btn {
+    padding: 6px 8px;
+    font-size: 0.7rem;
+  }
+
+  header.collapsed .nav-btn {
+    padding: 4px 6px;
+    font-size: 0.6rem;
+  }
+
+  /* Dropdown */
+  .dropdown-menu {
+    min-width: 110px;
+  }
+
+  .dropdown-menu a {
+    padding: 8px 8px;
+    font-size: 0.7rem;
   }
 
   /* Hero */
@@ -2905,14 +2855,14 @@ h2::after {
     font-size: 0.85rem;
   }
 
-  .search-bar {
-    width: 140px;
+  /* Navigation */
+  .header-nav {
+    padding: 6px 6px 8px 6px;
+    gap: 3px;
   }
 
-  .search-bar input,
-  .search-bar select,
-  .search-bar button {
-    padding: 2px;
+  .nav-btn {
+    padding: 5px 6px;
     font-size: 0.6rem;
   }
 
