@@ -1,10 +1,17 @@
 document.addEventListener('DOMContentLoaded', function(){
+  let combinedMenuCreated = false;
+  
   function setup(containerSelector){
     const container = document.querySelector(containerSelector);
     if(!container) return;
     
+    // Only create combined menu on mobile screens
+    if(window.innerWidth > 768) return;
+    
     // Check if already initialized
     if(container.querySelector('.auth-combined')) return;
+    
+    combinedMenuCreated = true;
     
     // create combined button
     const combined = document.createElement('div');
@@ -60,6 +67,32 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 
-  // Attach to all auth containers
+  function cleanup(containerSelector){
+    const container = document.querySelector(containerSelector);
+    if(!container) return;
+    const combined = container.querySelector('.auth-combined');
+    if(combined) {
+      combined.remove();
+      combinedMenuCreated = false;
+    }
+  }
+
+  // Initial setup
   setup('.auth-container');
+
+  // Handle window resize
+  let resizeTimer;
+  window.addEventListener('resize', function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){
+      const isMobile = window.innerWidth <= 768;
+      const container = document.querySelector('.auth-container');
+      
+      if(isMobile && !combinedMenuCreated){
+        setup('.auth-container');
+      } else if(!isMobile && combinedMenuCreated){
+        cleanup('.auth-container');
+      }
+    }, 250);
+  });
 });
