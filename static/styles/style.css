@@ -157,6 +157,28 @@ img {
   margin-bottom: 10px;
 }
 
+.city-longform {
+  margin-top: 28px;
+  padding: 22px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+}
+
+.city-longform h2 {
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.city-longform p {
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+}
+
+.city-longform p:last-child {
+  margin-bottom: 0;
+}
+
 .seo-block {
   margin-top: 32px;
   padding: 20px;
@@ -175,6 +197,22 @@ img {
   padding-left: 18px;
   margin-top: 12px;
   color: var(--text-secondary);
+}
+
+.seo-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.seo-links a {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
 }
 
 .faq-grid {
