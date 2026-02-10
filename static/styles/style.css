@@ -157,6 +157,65 @@ img {
   margin-bottom: 10px;
 }
 
+.seo-block {
+  margin-top: 32px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+}
+
+.seo-block h2,
+.seo-block h3 {
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.seo-block ul {
+  padding-left: 18px;
+  margin-top: 12px;
+  color: var(--text-secondary);
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.faq-item {
+  padding: 16px 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-primary);
+}
+
+.faq-item h4 {
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.contact-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  margin-top: 20px;
+}
+
+.contact-strip a {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
 /* Хедер */
 header {
   position: fixed;
