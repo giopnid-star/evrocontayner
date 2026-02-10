@@ -42,7 +42,7 @@
                 // Если на странице нет полного описания, перенаправляем на services.html с параметром
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    window.location.href = `services.html?expand=card${cardNum}`;
+                    window.location.href = `/services/?expand=card${cardNum}`;
                 });
             }
         }
