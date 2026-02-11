@@ -94,27 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateProjectsDisplay();
 });
 
-// Фильтр галереи
-const searchBtn = document.getElementById('search-btn');
-function applyFilter() {
-    const searchInput = document.getElementById('search');
-    const filterSelect = document.getElementById('filter');
-    if (!searchInput || !filterSelect) return;
-    const searchValue = searchInput.value.toLowerCase();
-    const filterValue = filterSelect.value;
-    const items = document.querySelectorAll('.gallery-item');
-    items.forEach(item => {
-        const h3 = item.querySelector('h3');
-        const title = h3 ? h3.textContent.toLowerCase() : '';
-        const type = item.dataset.type;
-        if ((title.includes(searchValue) || searchValue === '') && (filterValue === 'all' || type === filterValue)) {
-            item.style.display = 'block';
-        } else {
-            item.style.display = 'none';
-        }
-    });
-}
-if (searchBtn) searchBtn.addEventListener('click', applyFilter);
 
 // Подсветка активной ссылки в боковой панели
 const sidebarLinks = document.querySelectorAll('.sidebar a');
@@ -193,29 +172,6 @@ if (header && headerNav) {
             }
         }, 0);
     }, { passive: true });
-}
-// Открытие/закрытие поисковика
-const searchToggleBtn = document.querySelector('.search-toggle-btn');
-const headerTop = document.querySelector('.header-top');
-
-if (searchToggleBtn && headerTop) {
-    searchToggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        headerTop.classList.toggle('search-active');
-
-        // Фокус на input при открытии
-        const searchInput = document.getElementById('search');
-        if (headerTop.classList.contains('search-active') && searchInput) {
-            setTimeout(() => searchInput.focus(), 100);
-        }
-    });
-
-    // Закрытие поисковика при клике вне его
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.header-top')) {
-            headerTop.classList.remove('search-active');
-        }
-    });
 }
 
 // Обработчик кнопок "Подробнее" в услугах
