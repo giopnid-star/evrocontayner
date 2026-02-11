@@ -441,10 +441,8 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', database: 'PostgreSQL', timestamp: new Date().toISOString() });
 });
 
-// Serve static files (after all API endpoints)
-app.use(express.static(path.join(__dirname), {
-  skip: (req) => req.path.startsWith('/api')
-}));
+// Serve static files from root directory (HTML, CSS, JS, images)
+app.use(express.static(__dirname));
 
 app.listen(PORT, () => {
   console.log(`🚀 Mail & DB server listening on http://localhost:${PORT}`);
