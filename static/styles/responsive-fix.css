@@ -369,7 +369,7 @@
   }
   
   .header-nav {
-    overflow-x: auto;
+    overflow: hidden;
     overflow-y: visible;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -377,6 +377,10 @@
   
   .header-nav::-webkit-scrollbar {
     display: none;
+  }
+  
+  .dropdown-menu {
+    z-index: 3000 !important;
   }
 }
 
