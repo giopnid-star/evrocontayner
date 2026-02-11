@@ -1128,7 +1128,7 @@ header.collapsed .nav-item:hover .dropdown-menu {
   color: #fff;
   margin-left: 0;
   margin-top: 130px;
-  overflow: visible;
+  overflow: hidden;
   padding: 60px 40px;
   min-height: 600px;
 }
