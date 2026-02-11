@@ -472,19 +472,6 @@ header.collapsed {
   transform: translateY(0);
 }
 
-/* На средних экранах уменьшаем ширину поисковика */
-@media (max-width: 1200px) {
-  .search-bar {
-    width: 400px;
-  }
-}
-
-@media (max-width: 900px) {
-  .search-bar {
-    width: 350px;
-  }
-}
-
 /* Поведение поиска на мобильных: показывать в отдельной ячейке под header */
 @media (max-width: 768px) {
   .header-top {
