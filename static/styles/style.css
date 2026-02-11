@@ -426,9 +426,9 @@ header.collapsed {
 .search-panel {
   position: absolute;
   right: 420px;
-  top: calc(100% + 8px);
-  transform: translateY(-8px) scaleX(0);
-  transform-origin: right top;
+  top: 50%;
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: right center;
   width: 360px;
   max-width: 70vw;
   opacity: 0;
@@ -439,7 +439,7 @@ header.collapsed {
 .header-top.search-active .search-panel {
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0) scaleX(1);
+  transform: translateY(-50%) scaleX(1);
 }
 
 .search-panel-row {
