@@ -18,6 +18,21 @@ const SMTP_PORT = process.env.SMTP_PORT;
 const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
 
+// Check for DATABASE_URL
+if (!process.env.DATABASE_URL) {
+  console.error('❌ ОШИБКА: DATABASE_URL не установлена!');
+  console.error('');
+  console.error('На Railway выполните:');
+  console.error('1. В вашем проекте нажмите "New"');
+  console.error('2. Выберите "Database" → "Add PostgreSQL"');
+  console.error('3. Railway автоматически создаст DATABASE_URL');
+  console.error('4. Приложение перезапустится автоматически');
+  console.error('');
+  console.error('Для локальной разработки создайте .env файл:');
+  console.error('DATABASE_URL=postgresql://user:password@localhost:5432/evrocontayner');
+  process.exit(1);
+}
+
 // PostgreSQL connection pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -55,15 +70,32 @@ async function initDatabase() {
       )
     `);
 
-    console.log('✅ PostgreSQL database initialized');
+    // Create indexes for performance
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_contacts_sent ON contacts(sent)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at DESC)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_users_session_token ON users(session_token)`);
+
+    console.log('✅ PostgreSQL database initialized with indexes');
   } catch (err) {
-    console.error('❌ Database initialization error:', err);
+    console.error('❌ Database initialization error:', err.message);
+    console.error('Проверьте подключение к базе данных');
+    process.exit(1);
   } finally {
     client.release();
   }
 }
 
-initDatabase();
+// Test database connection before initializing
+pool.query('SELECT NOW()', (err) => {
+  if (err) {
+    console.error('❌ Не удалось подключиться к PostgreSQL:', err.message);
+    console.error('Убедитесь что PostgreSQL база добавлена в Railway проект');
+    process.exit(1);
+  }
+  console.log('✅ PostgreSQL подключение успешно');
+  initDatabase();
+});
 
 function hashPassword(password) {
   return crypto.createHash('sha256').update(password + 'salt_evrocontayner').digest('hex');
