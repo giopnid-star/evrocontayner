@@ -425,7 +425,7 @@ header.collapsed {
 
 .search-panel {
   position: absolute;
-  right: 52px;
+  right: 420px;
   top: 50%;
   transform: translateY(-50%) scaleX(0);
   transform-origin: right center;
