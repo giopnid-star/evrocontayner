@@ -446,7 +446,7 @@ header.collapsed {
    — при открытии увеличиваем отступ header, чтобы панель не перекрывала контент */
 .search-bar {
   position: absolute;
-  left: 12px;
+  left: auto;
   right: 12px;
   top: calc(100% + 4px);
   transform: none;
@@ -455,7 +455,8 @@ header.collapsed {
   gap: 10px;
   opacity: 0;
   pointer-events: none;
-  max-width: none;
+  width: 500px;
+  max-width: calc(100vw - 24px);
   overflow: hidden;
   padding: 12px;
   background: var(--bg-secondary);
@@ -463,19 +464,13 @@ header.collapsed {
   border: 1px solid var(--border-color);
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
   transition: opacity 0.22s ease, transform 0.22s ease, padding 0.2s ease;
-  transform-origin: top center;
+  transform-origin: top right;
   z-index: 1400;
 }
 
 .header-top.search-active .search-bar {
   opacity: 1;
   pointer-events: auto;
-}
-
-/* При открытом поиске увеличиваем внутренний отступ header, чтобы панель "вставала" под ним
-   и не перекрывала основной контент страницы */
-.header-top.search-active {
-  padding-bottom: 72px;
 }
 
 /* Поведение поиска на мобильных: показывать в аккуратной ячейке ниже header, не перекрывая контент */
@@ -489,6 +484,7 @@ header.collapsed {
   .search-bar {
     left: 12px;
     right: 12px;
+    width: auto;
     padding: 10px;
     gap: 8px;
     background: var(--bg-secondary);
@@ -498,6 +494,7 @@ header.collapsed {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.18s ease, transform 0.18s ease;
+    transform-origin: top center;
   }
   .header-top.search-active .search-bar {
     opacity: 1;
