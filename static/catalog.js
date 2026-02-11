@@ -388,39 +388,3 @@ serviceButtons.forEach(btn => {
         alert(`Для услуги "${title}" требуется консультация. Пожалуйста, свяжитесь с нами через форму контактов.`);
     });
 });
-
-// Переместить дропдауны в hero-container
-document.addEventListener('DOMContentLoaded', function() {
-  const heroContainer = document.querySelector('.hero-container');
-  if (!heroContainer) return;
-
-  // Клонируем и добавляем дропдауны в hero-container
-  const navItems = document.querySelectorAll('.nav-item');
-  navItems.forEach(navItem => {
-    const dropdownMenu = navItem.querySelector('.dropdown-menu');
-    if (dropdownMenu) {
-      const clonedDropdown = dropdownMenu.cloneNode(true);
-      clonedDropdown.classList.add('dropdown-in-hero');
-      heroContainer.appendChild(clonedDropdown);
-      
-      const navBtn = navItem.querySelector('.nav-btn');
-      if (navBtn) {
-        navBtn.addEventListener('mouseenter', () => {
-          clonedDropdown.style.opacity = '1';
-          clonedDropdown.style.visibility = 'visible';
-          clonedDropdown.style.transform = 'translateY(0)';
-        });
-      }
-    }
-  });
-
-  // Скрывать дропдауны при выходе из hero
-  heroContainer.addEventListener('mouseleave', () => {
-    const dropdownsInHero = heroContainer.querySelectorAll('.dropdown-in-hero');
-    dropdownsInHero.forEach(dropdown => {
-      dropdown.style.opacity = '0';
-      dropdown.style.visibility = 'hidden';
-      dropdown.style.transform = 'translateY(-10px)';
-    });
-  });
-});
