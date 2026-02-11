@@ -369,8 +369,9 @@
   }
   
   .header-nav {
-    overflow: hidden;
-    overflow-y: visible;
+    overflow: visible;
+    overflow-x: hidden;
+    flex-wrap: wrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
