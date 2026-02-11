@@ -482,7 +482,7 @@ header.collapsed {
 }
 
 .search-panel-dropdown {
-  margin-top: 8px;
+  margin-top: 16px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
