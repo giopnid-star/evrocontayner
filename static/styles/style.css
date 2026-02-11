@@ -426,6 +426,7 @@ header.collapsed {
 .search-panel {
   position: absolute;
   right: 420px;
+  z-index: 1402;
   transform: translateY(-8px) scaleX(0);
   transform-origin: right top;
   width: 360px;
@@ -482,7 +483,10 @@ header.collapsed {
 }
 
 .search-panel-dropdown {
-  margin-top: 16px;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
