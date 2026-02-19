@@ -378,12 +378,12 @@
 <body>
   <main>
     <div class="admin-header">
-      <h1>⚙️ Админ Панель</h1>
+      <h1>Админ Панель</h1>
     </div>
 
     <div class="tabs">
-      <button class="tab active" data-tab="contacts">📧 Заявки</button>
-      <button class="tab" data-tab="users">👥 Пользователи</button>
+      <button class="tab active" data-tab="contacts">Заявки</button>
+      <button class="tab" data-tab="users">Пользователи</button>
     </div>
 
     <div id="contacts" class="tab-content active">
@@ -403,15 +403,15 @@
       </div>
 
       <div class="admin-controls">
-        <input id="q" placeholder="🔍 Поиск по имени, email, сообщение...">
+        <input id="q" placeholder="Поиск по имени, email, сообщение...">
         <select id="sent">
           <option value="">Все заявки</option>
-          <option value="1">✅ Отправленные</option>
-          <option value="0">⏳ Не отправленные</option>
+          <option value="1">Отправленные</option>
+          <option value="0">Не отправленные</option>
         </select>
         <button class="btn" id="searchBtn">Поиск</button>
-        <button class="btn btn-secondary" id="exportBtn">📥 Экспорт CSV</button>
-        <button class="btn btn-secondary" id="backupBtn">💾 Бэкап БД</button>
+        <button class="btn btn-secondary" id="exportBtn">Экспорт CSV</button>
+        <button class="btn btn-secondary" id="backupBtn">Бэкап БД</button>
       </div>
 
       <table class="admin-table" id="contactsTable">
@@ -452,8 +452,8 @@
       </div>
 
       <div class="admin-controls">
-        <input id="userSearch" placeholder="🔍 Поиск пользователя...">
-        <button class="btn" id="refreshUsersBtn">🔄 Обновить</button>
+        <input id="userSearch" placeholder="Поиск пользователя...">
+        <button class="btn" id="refreshUsersBtn">Обновить</button>
       </div>
 
       <table class="admin-table" id="usersTable">
@@ -520,7 +520,7 @@
               <td>${new Date(contact.created_at).toLocaleDateString('ru-RU')}</td>
               <td>
                 <span class="admin-badge ${contact.sent ? 'badge-success' : 'badge-error'}">
-                  ${contact.sent ? '✅ Отправлено' : '⏳ Очередь'}
+                  ${contact.sent ? 'Отправлено' : 'Очередь'}
                 </span>
               </td>
             `;
@@ -563,7 +563,7 @@
               <td>${lastLogin}</td>
               <td>
                 <span class="admin-badge ${user.verified ? 'badge-success' : 'badge-info'}">
-                  ${user.verified ? '✅ Верифицирован' : '⏳ Ожидания'}
+                  ${user.verified ? 'Верифицирован' : 'Ожидания'}
                 </span>
               </td>
             `;
@@ -609,9 +609,9 @@
       try {
         const response = await fetch('/api/backup', { method: 'POST' });
         const data = await response.json();
-        alert('✅ Бэкап создан: ' + data.file);
+        alert('Бэкап создан: ' + data.file);
       } catch (err) {
-        alert('❌ Ошибка: ' + err.message);
+        alert('Ошибка: ' + err.message);
       }
     });
 

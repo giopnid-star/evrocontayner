@@ -18,10 +18,20 @@ function applyTheme(theme) {
 
     if (theme === 'dark') {
         root.classList.add('dark-mode');
-        if (themeBtn) themeBtn.textContent = '☀️';
+        if (themeBtn) {
+            const moonIcon = themeBtn.querySelector('.moon-icon');
+            const sunIcon = themeBtn.querySelector('.sun-icon');
+            if (moonIcon) moonIcon.style.display = 'none';
+            if (sunIcon) sunIcon.style.display = 'block';
+        }
     } else {
         root.classList.remove('dark-mode');
-        if (themeBtn) themeBtn.textContent = '🌙';
+        if (themeBtn) {
+            const moonIcon = themeBtn.querySelector('.moon-icon');
+            const sunIcon = themeBtn.querySelector('.sun-icon');
+            if (moonIcon) moonIcon.style.display = 'block';
+            if (sunIcon) sunIcon.style.display = 'none';
+        }
     }
 
     // Сохранить в localStorage
