@@ -1,4 +1,33 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /backups-server/
+Disallow: /login/
+Disallow: /register/
+Disallow: /api/
+Disallow: /*.pdf$
+Disallow: /*?*
+Disallow: /*.js$
+Disallow: /*.css$
 
+# Allow important paths
+Allow: /static/
+Allow: /images/
+
+# Crawl delays (optional)
+Crawl-delay: 1
+
+# Sitemaps
 Sitemap: https://evrocontayner.kz/sitemap.xml
+Sitemap: https://evrocontayner.kz/sitemap-cities.xml
+Sitemap: https://evrocontayner.kz/sitemap-images.xml
+
+# Google specific
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Yandex specific
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 0
