@@ -95,7 +95,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="static/styles/style.css">
   <link rel="stylesheet" href="static/styles/theme-variables.css">
   <link rel="stylesheet" href="static/styles/responsive-fix.css">
@@ -365,38 +365,74 @@
   </div>
 
   <section class="hero">
+    <span class="hero-ambient hero-ambient--one" aria-hidden="true"></span>
+    <span class="hero-ambient hero-ambient--two" aria-hidden="true"></span>
     <div class="hero-container">
       <div class="hero-content">
+        <div class="hero-kicker-wrap">
+          <p class="hero-kicker">Premium Modular Architecture</p>
+          <span class="hero-kicker-line" aria-hidden="true"></span>
+        </div>
         <h1 class="hero-title" data-i18n="hero.title">Современные контейнеры и киоски для бизнеса</h1>
         <p class="hero-description" data-i18n="hero.desc">Производство, продажа и переоборудование контейнеров под ваши
           нужды</p>
-        <a href="/products/#calculator" class="hero-cta" data-i18n="hero.cta">Узнать стоимость</a>
+        <div class="hero-points">
+          <span class="hero-point">Срок запуска от 7 дней</span>
+          <span class="hero-point">Инженерный контроль качества</span>
+          <span class="hero-point">Доставка и монтаж под ключ</span>
+        </div>
+        <div class="hero-actions">
+          <a href="/products/#calculator" class="hero-cta" data-i18n="hero.cta">Узнать стоимость</a>
+          <a href="/gallery/" class="hero-cta-secondary">Смотреть проекты</a>
+        </div>
+        <div class="hero-metrics" aria-label="Ключевые показатели компании">
+          <div class="hero-metric">
+            <strong>120+</strong>
+            <span>сданных объектов</span>
+          </div>
+          <div class="hero-metric">
+            <strong>4.9</strong>
+            <span>средний рейтинг клиентов</span>
+          </div>
+          <div class="hero-metric">
+            <strong>8</strong>
+            <span>городов с сервисом</span>
+          </div>
+        </div>
       </div>
       <div class="hero-images-container">
-        <div class="hero-carousel">
-          <div class="hero-img-wrapper active">
-            <img src="images/images_previef/1.jpg" class="hero-img" alt="Контейнер 1">
-            <div class="hero-progress">
-              <div class="hero-progress__bar"></div>
+        <div class="hero-showcase">
+          <div class="hero-badge">Signature Collection</div>
+          <div class="hero-carousel">
+            <div class="hero-img-wrapper active">
+              <img src="images/images_previef/1.jpg" class="hero-img" alt="Контейнер 1">
+              <div class="hero-progress">
+                <div class="hero-progress__bar"></div>
+              </div>
+            </div>
+            <div class="hero-img-wrapper">
+              <img src="images/images_previef/2.jpeg" class="hero-img" alt="Контейнер 2">
+              <div class="hero-progress">
+                <div class="hero-progress__bar"></div>
+              </div>
+            </div>
+            <div class="hero-img-wrapper">
+              <img src="images/images_previef/3.jpg" class="hero-img" alt="Контейнер 3">
+              <div class="hero-progress">
+                <div class="hero-progress__bar"></div>
+              </div>
+            </div>
+            <div class="hero-img-wrapper">
+              <img src="images/images_previef/4.jpg" class="hero-img" alt="Контейнер 4">
+              <div class="hero-progress">
+                <div class="hero-progress__bar"></div>
+              </div>
             </div>
           </div>
-          <div class="hero-img-wrapper">
-            <img src="images/images_previef/2.jpeg" class="hero-img" alt="Контейнер 2">
-            <div class="hero-progress">
-              <div class="hero-progress__bar"></div>
-            </div>
-          </div>
-          <div class="hero-img-wrapper">
-            <img src="images/images_previef/3.jpg" class="hero-img" alt="Контейнер 3">
-            <div class="hero-progress">
-              <div class="hero-progress__bar"></div>
-            </div>
-          </div>
-          <div class="hero-img-wrapper">
-            <img src="images/images_previef/4.jpg" class="hero-img" alt="Контейнер 4">
-            <div class="hero-progress">
-              <div class="hero-progress__bar"></div>
-            </div>
+          <div class="hero-floating-card">
+            <span>Срок готовности</span>
+            <strong>7-14 дней</strong>
+            <p>Проектирование, производство, доставка и запуск в одном цикле.</p>
           </div>
         </div>
         <div class="hero-pagination">

@@ -9,9 +9,11 @@
     "backup-db": "powershell -NoProfile -Command \"Copy-Item data/db.sqlite backups-server/db.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss').sqlite\""
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.4",
     "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
     "nodemailer": "^6.9.3",
     "pg": "^8.11.3"
   },

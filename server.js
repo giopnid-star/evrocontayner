@@ -5,7 +5,9 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const { Pool } = require('pg');
-const crypto = require('crypto');
+const crypto = require('crypto'); // Оставляем для токенов
+const bcrypt = require('bcryptjs');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 app.use(cors());
@@ -17,6 +19,23 @@ const SMTP_HOST = process.env.SMTP_HOST;
 const SMTP_PORT = process.env.SMTP_PORT;
 const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
+
+// --- SECURITY: Rate Limiters ---
+// Ограничитель для API (100 запросов за 15 минут)
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+// Строгий ограничитель для логина и отправки писем (5 попыток за час)
+const authLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10, 
+  message: { error: 'Слишком много попыток, попробуйте позже' }
+});
+
+app.use('/api/', apiLimiter);
 
 // Check for DATABASE_URL
 if (!process.env.DATABASE_URL) {
@@ -97,10 +116,6 @@ pool.query('SELECT NOW()', (err) => {
   initDatabase();
 });
 
-function hashPassword(password) {
-  return crypto.createHash('sha256').update(password + 'salt_evrocontayner').digest('hex');
-}
-
 function generateToken() {
   return crypto.randomBytes(32).toString('hex');
 }
@@ -119,7 +134,7 @@ app.post('/api/register', async (req, res) => {
       return res.status(409).json({ error: 'Пользователь с таким email уже зарегистрирован' });
     }
 
-    const passwordHash = hashPassword(password);
+    const passwordHash = await bcrypt.hash(password, 10);
     const verificationToken = generateToken();
     
     const result = await client.query(
@@ -175,7 +190,7 @@ app.post('/api/register', async (req, res) => {
 });
 
 // POST: User Login
-app.post('/api/login', async (req, res) => {
+app.post('/api/login', authLimiter, async (req, res) => {
   const { email, password, rememberMe } = req.body || {};
   if (!email || !password) {
     return res.status(400).json({ error: 'Email и пароль обязательны' });
@@ -189,8 +204,8 @@ app.post('/api/login', async (req, res) => {
     }
 
     const user = result.rows[0];
-    const passwordHash = hashPassword(password);
-    if (user.password_hash !== passwordHash) {
+    const match = await bcrypt.compare(password, user.password_hash);
+    if (!match) {
       return res.status(401).json({ error: 'Неверный email или пароль' });
     }
 
@@ -272,7 +287,7 @@ app.get('/api/users', async (req, res) => {
 });
 
 // POST: Send email
-app.post('/send', async (req, res) => {
+app.post('/send', authLimiter, async (req, res) => {
   const { name, email, message } = req.body || {};
   if (!name || !email || !message) return res.status(400).json({ error: 'Не заполнены обязательные поля' });
 
@@ -438,6 +453,59 @@ app.post('/api/backup', async (req, res) => {
     console.error('Backup info error:', err);
     return res.status(500).json({ error: err.message });
   }
+});
+
+// GET: Dynamic Sitemap.xml
+app.get('/sitemap.xml', (req, res) => {
+  const baseUrl = 'https://evrocontayner.kz';
+  const today = new Date().toISOString().split('T')[0];
+
+  const pages = [
+    { url: '/', priority: 1.0, freq: 'weekly' },
+    { url: '/products/', priority: 0.9, freq: 'weekly' },
+    { url: '/services/', priority: 0.9, freq: 'weekly' },
+    { url: '/kiosks/', priority: 0.8, freq: 'weekly' },
+    { url: '/pavilions/', priority: 0.8, freq: 'weekly' },
+    { url: '/containers/', priority: 0.8, freq: 'weekly' },
+    { url: '/about/', priority: 0.7, freq: 'monthly' },
+    { url: '/contact/', priority: 0.7, freq: 'monthly' },
+    { url: '/gallery/', priority: 0.6, freq: 'monthly' },
+    { url: '/kiosk-karaganda/', priority: 0.7, freq: 'monthly' },
+    { url: '/terms/', priority: 0.3, freq: 'yearly' }
+  ];
+
+  const cities = [
+    'almaty', 'astana', 'shymkent', 'karaganda', 'aktobe', 
+    'taraz', 'pavlodar', 'ust-kamenogorsk', 'semey', 'atyrau', 
+    'kostanay', 'kyzylorda', 'aktau', 'oral', 'turkistan', 
+    'kokshetau', 'taldykorgan', 'petropavl', 'ekibastuz', 'zhezkazgan'
+  ];
+
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+
+  pages.forEach(page => {
+    xml += '  <url>\n';
+    xml += `    <loc>${baseUrl}${page.url}</loc>\n`;
+    xml += `    <lastmod>${today}</lastmod>\n`;
+    xml += `    <changefreq>${page.freq}</changefreq>\n`;
+    xml += `    <priority>${page.priority}</priority>\n`;
+    xml += '  </url>\n';
+  });
+
+  cities.forEach(city => {
+    xml += '  <url>\n';
+    xml += `    <loc>${baseUrl}/city/${city}/</loc>\n`;
+    xml += `    <lastmod>${today}</lastmod>\n`;
+    xml += `    <changefreq>monthly</changefreq>\n`;
+    xml += `    <priority>0.7</priority>\n`;
+    xml += '  </url>\n';
+  });
+
+  xml += '</urlset>';
+  
+  res.header('Content-Type', 'application/xml');
+  res.send(xml);
 });
 
 // Health check endpoint (MUST be before static files)
